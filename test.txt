@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
   <head>
+    <meta charset="UTF-8" />
     <title>1일 1커밋을 하자</title>
   </head>
   <body>
