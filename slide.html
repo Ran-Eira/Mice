@@ -1,0 +1,42 @@
+<DOCTYPE html>
+<html lang="ko">
+    <head>
+        <title>slideToggle</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <style>
+            body, div, h1, ul, li, a{ padding:0; margin:0; list-style:none; text-decoration:none; color:#333; }
+            #container{ width:100%; min-width:100%; }
+            .c_wrap{ padding:30px;  max-width:600px; margin:0 auto; }
+            .c_wrap>ul{ text-align:center; }
+            .c_wrap>ul>li.c_list{ min-width:200px; height:30px; line-height:30px; float:left; }
+
+            .under_list{ display:none; }
+            .under_list>li{ height:30px; background-color:#333; color:#fff; }
+        </style>
+    </head>
+    <body>
+        <div id="container">
+            <section class="c_wrap">
+                <ul class="c_inner">
+                    <li class="c_list">
+                        <a href="#">mice 1</a>
+                        <ul class="under_list">
+                            <li>under mice1</li>
+                            <li>under mice2</li>
+                        </ul>
+                    </li>
+                    <li class="c_list"><a href="#">mice 2</a></li>
+                    <li class="c_list"><a href="#">mice 3</a></li>
+                </ul>
+            </section>
+        </div>
+        <script>
+            $(".c_list>a").on("click", function(){
+                $(this).next("ul.under_list").slideToggle(300);
+            });
+        </script>
+    </body>
+</html>
