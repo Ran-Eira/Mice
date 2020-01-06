@@ -1,1 +1,9 @@
-Javascript study
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>1일 1커밋을 하자</title>
+  </head>
+  <body>
+    <h1>Javascript Study</h1>
+  </body>
+</html>
