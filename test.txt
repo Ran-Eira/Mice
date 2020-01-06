@@ -1,1 +1,10 @@
-Javascript study
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <title>1일 1커밋을 하자</title>
+  </head>
+  <body>
+    <h1>Javascript Study</h1>
+  </body>
+</html>
