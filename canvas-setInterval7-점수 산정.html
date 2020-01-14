@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+        <title>Canvas setInterval7 - 점수 산정</title>
+        <style>
+            a, article, body, div, h1, h2, h3, header, html, li, ul, footer{
+                margin:0; padding:0; list-style:none; color:#333 }
+            a, a:visited, a:link, a:hover{ text-decoration:none; color:#fff; }
+
+            #header{ min-height:60px; width:100%; border-bottom:1px solid #111; background-color:#444; box-sizing:border-box; }
+            #header .h_wrap{ margin:0 auto; max-width:1000px; }
+            #header .h_wrap > h1{ float:left; margin-top:5px; }
+            #header .h_wrap > ul{ float:right; margin-top:15px; }
+            #header .h_wrap > ul > li{ display:inline-block; }
+            #header .h_wrap > ul > li a{ padding:0 5px; margin:10px 0; }
+
+            #container{ width:100%; background-color:#eee; padding:50px 0; }
+            #container canvas{ margin:0 auto; display:block; background-color:#444; color:#fff; }
+
+            #footer{ background-color:#333; color:#fff; text-align:center; min-height:30px; line-height:30px; }
+        </style>
+    </head>
+    <body>
+        <header id="header">
+            <div class="h_wrap">
+                <h1><a href="#" title="LOGO" class="logo">LOGO</a></h1>
+                <ul>
+                    <li><a href="#" title="m1">m1</a></li>
+                    <li><a href="#" title="m2">m2</a></li>
+                    <li><a href="#" title="m3">m3</a></li>
+                </ul>
+            </div>
+        </header>
+        <article id="container">
+            <canvas id="myCanvas" widtdh="450" height="250"></canvas>
+        </article>
+        <footer id="footer">Canvas</footer>
+        <script>
+            var canvas = document.getElementById("myCanvas");
+            var ctx = canvas.getContext("2d");
+            var ballRadius = 10;
+            var x = canvas.width/2;
+            var y = canvas.height-30;
+            var dx = 1;
+            var dy = -3;
+
+            //paddle 변수 설정값
+            var paddleHeight = 10;
+            var paddleWidth = 60;
+            var paddleX = (canvas.width-paddleWidth)/2;
+
+            //버튼을 누르는 변수, 처음에는 눌리지 않았기 때문에 기본값인 false
+            var rightPressed = false;
+            var leftPressed = false;
+
+            //2차원 배열로 동작하는 반복문을 위해 벽돌에 대한 변수 추가
+            var brickColumnCount = 3;
+            var brickRowCount = 5;
+            var brickWidth = 70;
+            var brickHeight = 20;
+            var brickPadding = 10;
+            var brickOffsetTop = 30;
+            var brickOffsetLeft = 30;
+
+            //for문, 열c 행r
+            var bricks = [];
+            for( var c = 0; c < brickColumnCount; c++ ){
+                bricks[c] = [];
+                for( var r = 0; r < brickRowCount; r++ ){
+                    bricks[c][r] = { x:0, y:0, status:1 };
+                }
+            }
+
+            //점수 산정
+            var score = 0;
+
+            //키가 눌렸음을 인식하기 위해 이벤트 리스너 설정
+            document.addEventListener("keydown", keyDownHandler, false);
+            document.addEventListener("keyup", keyUpHandler, false);
+
+            function keyDownHandler(e){
+                if( e.keyCode == 39 ){
+                    rightPressed = true;
+                } else if( e.keyCode == 37 ){
+                    leftPressed = true;
+                }
+            }
+            function keyUpHandler(e){
+                if( e.keyCode == 39 ){
+                    rightPressed = false;
+                } else if( e.keyCode == 37 ){
+                    leftPressed = false;
+                }
+            }
+
+            function collisionDetection(){
+                for( var c=0; c<brickColumnCount; c++ ){
+                    for( var r=0; r<brickRowCount; r++ ){
+                        var b = bricks[c][r];
+                        //변수 b = 충돌 감지의 반복에서 사용될 벽돌객체를 저장하는 변수
+                        //calculations
+                        if( b.status == 1 ){
+                            if( x > b.x && x < b.x + brickWidth && y > b.y && y < b.y + brickHeight ){
+                                dy = -dy;
+                                b.status = 0;
+                                score++;
+                                if( score == brickRowCount*brickColumnCount ){
+                                    alert("YOU WIN!");
+                                    document.location.reload();
+                                    clearInterval(interval);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            function drawScore(){
+                ctx.font = "16px Arial";
+                ctx.fillStyle = "plum";
+                ctx.fillText("Score: "+score, 8, 20);
+            }
+
+            function drawBall(){
+                ctx.beginPath();
+                ctx.arc(x, y, ballRadius, 0, Math.PI*2);
+                ctx.fillStyle = "orange";
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function drawPaddle(){
+                ctx.beginPath();
+                ctx.rect(paddleX, canvas.height-paddleHeight, paddleWidth, paddleHeight);
+                ctx.fillStyle = "#fff";
+                ctx.fill();
+                ctx.closePath();
+            }
+
+            function drawBricks(){
+                for( var c = 0; c < brickColumnCount; c++ ){
+                    for( var r = 0; r < brickRowCount; r++ ){
+                        if( bricks[c][r].status == 1 ){
+                            //status가 1일 때 벽돌을 그리고 0일 때 공이 치고간 벽돌이므로 그릴 필요가 없음
+                            var brickX = (c*(brickWidth+brickPadding)) + brickOffsetLeft;
+                            var brickY = (r*(brickHeight+brickPadding)) + brickOffsetTop;
+                            bricks[c][r].x = brickX;
+                            bricks[c][r].y = brickY;
+                            ctx.beginPath();
+                            ctx.rect(brickX, brickY, brickWidth, brickHeight);
+                            ctx.fillStyle = "orange";
+                            ctx.fill();
+                            ctx.closePath();
+                        }
+                    }
+                }
+            }
+
+            function draw(){
+                //drawing clode
+                ctx.clearRect(0, 0, canvas.width, canvas.height); 
+                //4개의 파라미터, 직사각형의 좌상단 x, y값 + 직사각형의 우하단 x, y값
+                
+                drawBricks();
+                drawBall();
+                drawPaddle();
+                drawScore();
+                collisionDetection();
+
+                //좌우
+                if( (x + dx > canvas.width-ballRadius) || (x + dx < ballRadius) ){
+                    dx = -dx;
+                }
+                //상하
+                if( y + dy < ballRadius ){
+                    dy = -dy;
+                } else if( y + dy > canvas.height-ballRadius ){
+                    if( x > paddleX && x < paddleX + paddleWidth ){
+                        dy = -dy;
+                    } else{
+                        alert("GAME OVER");
+                        document.location.reload();
+                        clearInterval(interval);
+                    }
+                }
+                
+                x += dx;
+                y += dy;
+
+                //paddle 이동 로직
+                if( rightPressed && paddleX < canvas.width-paddleWidth ){
+                    paddleX += 7;
+                } else if( leftPressed && paddleX > 0 ){
+                    paddleX -= 7;
+                }
+
+            }            
+            var interval = setInterval(draw, 20);
+            //requestAnimationFrame(draw, 20);
+        </script>
+    </body>
+</html>
